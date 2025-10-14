@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.article_project.domain.Article;
 
+// Spring Data Jpa 
 @Repository
 public interface ArticleRepository extends JpaRepository<Article,Long>{
     
