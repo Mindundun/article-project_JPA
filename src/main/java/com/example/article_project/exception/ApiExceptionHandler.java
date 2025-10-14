@@ -6,7 +6,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestControllerAdvice
 public class ApiExceptionHandler {
 
@@ -14,7 +16,8 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorResponse> handleException(HttpServletRequest req, Exception ex){
 
-        System.out.println("uri : " + req.getRequestURI() + ", method : " + req.getMethod() + ", ErrorMessage : " + ex.getMessage());
+        log.error("uri : {}, method : {}, ErrorMessage : {}" , req.getRequestURI() , req.getMethod() , ex.getMessage());
+        // System.out.println("uri : " + req.getRequestURI() + ", method : " + req.getMethod() + ", ErrorMessage : " + ex.getMessage());
 
         // Builder 패턴
         ErrorResponse response = ErrorResponse.builder()
@@ -30,7 +33,8 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = ArticleNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleException(HttpServletRequest req, ArticleNotFoundException ex){
 
-        System.out.println("uri : " + req.getRequestURI() + ", method : " + req.getMethod() + ", ErrorMessage : " + ex.getMessage());
+        log.error("uri : {}, method : {}, ErrorMessage : {}" , req.getRequestURI() , req.getMethod() , ex.getMessage());
+        // System.out.println("uri : " + req.getRequestURI() + ", method : " + req.getMethod() + ", ErrorMessage : " + ex.getMessage());
 
         ErrorResponse response = ErrorResponse.builder()
                                     .code(String.valueOf(HttpStatus.BAD_REQUEST.value())) // → "400" 
