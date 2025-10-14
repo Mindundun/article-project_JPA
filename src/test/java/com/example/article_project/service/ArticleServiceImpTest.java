@@ -33,7 +33,6 @@ public class ArticleServiceImpTest {
         
         // When
         Long id = articleService.registerArticle(articleDto);
-
         log.info("id : {}", id);
 
         // Then
