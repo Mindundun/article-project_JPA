@@ -53,7 +53,7 @@ public class PageResponseDto<T> {
         log.info("start : {}", start);
 
         // 총 페이지 수를 계산
-        int lastPage = (int)(Math.ceil(totalCount / (double)size)) * size;
+        int lastPage = (int)(Math.ceil(totalCount / (double)size));
 
         log.info("lastPage : {}", lastPage);
 
