@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.article_project.domain.Article;
+import com.example.article_project.domain.Attachment;
 import com.example.article_project.dto.ArticleDto;
 
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +34,7 @@ public class ArticleRepositoryTest {
         // Given
         List<Article> articles = new ArrayList<>();
         
-        for(int i = 0; i<100; i++){
+        for(int i = 0; i<125; i++){
             
             Article article = new Article();
             article.setTitle("박title"+(i+1));
@@ -48,7 +49,7 @@ public class ArticleRepositoryTest {
         articleRepository.saveAll(articles);
 
         // Then
-        assertThat(articles).hasSize(100);
+        assertThat(articles).hasSize(125);
             
     }
 
@@ -124,5 +125,79 @@ public class ArticleRepositoryTest {
             
         }).isInstanceOf(IllegalArgumentException.class);
         
+    }
+
+    @Test
+    @Rollback(false)
+    void saveArticleAndFile(){
+        // Given    
+
+        List<Attachment> files = new ArrayList<>();
+        files.add(new Attachment("A.txt","/upload",1007L));
+        files.add(new Attachment("B.txt","/upload",2007L));
+        files.add(new Attachment("C.txt","/upload",3007L));
+
+        Article article = Article.builder()
+                            .title("title")
+                            .contents("contents")
+                            .writer("writer")
+                            .files(files)
+                            .build();
+        
+        // When
+        articleRepository.save(article);
+
+        // Then
+        Long id = article.getId();
+        assertThat(id).isNotNull();
+
+    }
+
+    @Test
+    void testFindArticleById(){
+        // Given
+        Long id = 210L;
+
+        // When
+        Article article = articleRepository.findArticleById(id);
+
+        article.getFiles().forEach(file -> log.info("Files : {} ",file));
+
+        // Then
+        assertThat(article.getId()).isNotNull();
+
+        assertThat(article.getFiles()).hasSize(3);
+
+    }
+
+    @Test
+    void testGetFileCount() {
+        // Given
+        Long id = 210L;
+
+        // When
+        int num = articleRepository.getFileCount(id);
+
+        
+        // Then
+        assertThat(num).isNotNull();
+
+        assertThat(num).isEqualTo(3);
+    }
+
+    @Test
+    void testFindArticleWithFirstFile(){
+        // Given
+        Long id = 210L;
+
+        // When
+        Article article = articleRepository.findArticleWithFirstFile(id);
+
+        log.info(article.getFiles().toString());
+        
+        // Then
+        assertThat(article.getId()).isNotNull();
+        assertThat(article.getFiles()).hasSize(1);
+
     }
 }

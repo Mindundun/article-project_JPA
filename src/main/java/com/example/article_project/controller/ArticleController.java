@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.article_project.domain.Article;
 import com.example.article_project.dto.ArticleDto;
+import com.example.article_project.dto.PageRequestDto;
+import com.example.article_project.dto.PageResponseDto;
 import com.example.article_project.service.ArticleService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
 
 
@@ -32,6 +33,13 @@ public class ArticleController {
     
     private final ArticleService articleService;
 
+    // 페이징 조회
+    @GetMapping("/articles")
+    public ResponseEntity<PageResponseDto<ArticleDto>> paging(PageRequestDto pageRequestDto) {
+        PageResponseDto<ArticleDto> pageResponseDto = articleService.paging(pageRequestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(pageResponseDto);
+    }
+    
     // 게시글 등록
     @PostMapping("/articles")
     public ResponseEntity<Map<String, Long>> postArticle(@RequestBody ArticleDto articleDto) {

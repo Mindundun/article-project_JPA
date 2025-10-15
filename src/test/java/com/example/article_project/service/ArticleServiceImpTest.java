@@ -11,6 +11,8 @@ import org.springframework.test.annotation.Rollback;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.article_project.dto.ArticleDto;
+import com.example.article_project.dto.PageRequestDto;
+import com.example.article_project.dto.PageResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -78,5 +80,26 @@ public class ArticleServiceImpTest {
 
         assertThat(found).isNotNull();
         assertThat(found.getTitle()).isEqualTo("수정할거다");
+    }
+
+    // 페이징 처리
+    @Test
+    void testPaging(){
+
+        // Given
+        PageRequestDto pageRequestDto = PageRequestDto.builder()
+                                                    .page(2)
+                                                    .size(10)
+                                                    .build();
+        // When
+        PageResponseDto<ArticleDto> page = articleService.paging(pageRequestDto);
+        log.info("Page.TotalCount: {}", page.getTotalCount());
+        log.info("Page : {} , size : {}", page.getPageRequestDto().getPage(), page.getPageRequestDto().getSize());
+
+        page.getDtoList().forEach(article -> log.info("article : {}", article.toString()));
+
+        // Then
+        assertThat(page.getDtoList()).hasSize(10);
+        assertThat(page.getTotalCount()).isEqualTo(125);
     }
 }

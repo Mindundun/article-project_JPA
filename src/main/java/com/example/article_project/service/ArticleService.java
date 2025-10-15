@@ -5,10 +5,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.article_project.domain.Article;
 import com.example.article_project.dto.ArticleDto;
+import com.example.article_project.dto.PageRequestDto;
+import com.example.article_project.dto.PageResponseDto;
 
 
 @Service
 public interface ArticleService {
+
+    // 페이징 처리
+    PageResponseDto<ArticleDto> paging(PageRequestDto pageRequestDto);
 
     // 게시글 등록
     public Long registerArticle(ArticleDto articleDto);
