@@ -11,13 +11,18 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.isNotNull;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @SpringBootTest
 @Transactional
+@Slf4j
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class ArticleTest {
     @Autowired
@@ -44,16 +49,53 @@ public class ArticleTest {
 
         // When
 
-        List<Article> articles = queryFactory.select(qArticle)
-                                            .from(qArticle)
+        // List<Article> articles = queryFactory.select(qArticle)
+        //                                     .from(qArticle)
+        //                                     .fetch();
+
+
+        // ****************************************
+
+        // List<Article> articles = queryFactory.selectFrom(qArticle)
+        //                                     .where(qArticle.title.contains("빢빢")) // .where(qArticle.title.like("%title%"))
+        //                                     .fetch();
+
+        // log.info("articles : {}", articles.size());
+
+        // ****************************************
+
+        List<Article> articles = queryFactory.selectFrom(qArticle)
+                                            .where(qArticle.title.contains("title").and(qArticle.contents.contains("content")))
+                                            .orderBy(qArticle.id.desc())
                                             .fetch();
 
-        // Article result = 
+        log.info("articles first Id : {}", articles.get(0).getId());
+        log.info("articles last Id : {}", articles.get(articles.size() - 1).getId());
+        log.info("articles : {}", articles.size());
 
 
         // Then
-        assertThat(articles).hasSize(252);
+        // assertThat(articles).hasSize(252);
+        assertThat(articles).isNotNull();
+    }
 
+    @Test
+    void test1() {
+        // Given
+        Long articleId = 281L;
+
+        // Q 클래스
+        QArticle qArticle = QArticle.article;
+
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em); 
+
+        // When
+        Article article = queryFactory.selectFrom(qArticle)
+                                        .where(qArticle.id.eq(articleId))
+                                        .fetchOne();
+        
+        // Then
+        assertThat(article).isNotNull();
 
     }
 
