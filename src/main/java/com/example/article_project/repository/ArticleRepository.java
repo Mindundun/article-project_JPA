@@ -9,7 +9,7 @@ import com.example.article_project.domain.Article;
 
 // Spring Data Jpa 
 @Repository
-public interface ArticleRepository extends JpaRepository<Article,Long>{
+public interface ArticleRepository extends JpaRepository<Article,Long> , CustomArticleRepository{
     
     @Query("SELECT a FROM Article AS a WHERE a.id = :articleId")
     Article findArticleById(@Param("articleId") Long id);
