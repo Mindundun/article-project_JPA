@@ -36,7 +36,7 @@ public class CustomArticleRepositoryImpl implements CustomArticleRepository{
     @Override
     public Page<Article> search(ArticleSearchCondition condition, Pageable pageable) {
         // 사용자가 검색 조건을 입력하지 않는 경우
-        if (condition.getTitle() == "" && condition.getContents() == ""  && condition.getWriter() == "" ) {
+        if (condition.getTitle() == null && condition.getContents() == null  && condition.getWriter() == null ) {
             // 페이지 번호에 해당하는 게시글 목록 조회
             List<Article> articles = jpaQueryFactory.selectFrom(qArticle)
                                                     .orderBy(qArticle.id.desc())
@@ -54,11 +54,7 @@ public class CustomArticleRepositoryImpl implements CustomArticleRepository{
         } else {
             // 페이지 번호와 검색 조건에 해당하는 게시글 목록 조회
             List<Article> articles = jpaQueryFactory.selectFrom(qArticle)
-                                                    .where(
-                                                        titleLike(condition.getTitle()) // 조건이 null이 아니면 쿼리에 포함
-                                                        .and(contentsLike(condition.getContents()))
-                                                        .and(writerLike(condition.getWriter()))
-                                                    )
+                                                    .where(predicate(condition))
                                                     .orderBy(qArticle.id.desc())
                                                     .offset(pageable.getPageNumber() * pageable.getPageSize())
                                                     .limit(pageable.getPageSize())
@@ -69,8 +65,8 @@ public class CustomArticleRepositoryImpl implements CustomArticleRepository{
                                             .from(qArticle)
                                             .where(
                                                         titleLike(condition.getTitle()) // 조건이 null이 아니면 쿼리에 포함
-                                                        .and(contentsLike(condition.getContents()))
-                                                        .and(writerLike(condition.getWriter()))
+                                                        ,contentsLike(condition.getContents())
+                                                        ,writerLike(condition.getWriter())
                                                     )
                                             .fetchOne();
 
@@ -93,4 +89,30 @@ public class CustomArticleRepositoryImpl implements CustomArticleRepository{
         // return writer == null ? null : qArticle.writer.contains(writer);
         return writer == null ? null : qArticle.writer.like("%" + writer + "%");
     }
+
+    /*
+        .where(predicate(condition))
+        .orderBy(article.id.desc())
+        .offset((long) pageable.getPageNumber() * pageable.getPageSize())
+        .limit(pageable.getPageSize())
+   */
+    // 단일 조건 필터링
+    private BooleanExpression predicate(ArticleSearchCondition condition) {
+        BooleanExpression predicate = null;
+        if (condition.getTitle() != null) {
+            predicate = qArticle.title.contains(condition.getTitle());
+            // buildPredicate(condition, predicate); // 다중 조건일때
+        } else if (condition.getContents() != null) {
+            predicate = qArticle.contents.contains(condition.getContents());
+            // buildPredicate(condition, predicate);
+        } else if (condition.getWriter() != null) {
+            predicate = qArticle.writer.contains(condition.getWriter());
+            // buildPredicate(condition, predicate);
+        }
+        return predicate;
+    }
+    // 다중 조건 필터링 조건문 조합
+	// private BooleanExpression buildPredicate(ArticleSearchCondition condition, BooleanExpression predicate) {
+	//   return predicate.and(predicate);
+	// }
 }

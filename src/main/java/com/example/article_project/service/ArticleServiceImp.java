@@ -20,7 +20,9 @@ import com.example.article_project.repository.ArticleRepository;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -40,6 +42,15 @@ public class ArticleServiceImp implements ArticleService {
         List<ArticleDto> articles = page.getContent().stream().map(article -> entityToDto(article)).collect(Collectors.toList());
 
         int totalCount = (int)page.getTotalElements();
+        log.info("pageable : {} " , pageable);
+        log.info("page : {} " , page);
+        log.info("articles : {} " , articles);
+
+        log.info("제바레바레자ㅔ바렞 : {}", PageResponseDto.<ArticleDto>builder()
+                                .dtoList(articles)
+                                .pageRequestDto(pageRequestDto)
+                                .totalCount(totalCount)
+                                .build());
 
         return PageResponseDto.<ArticleDto>builder()
                                 .dtoList(articles)

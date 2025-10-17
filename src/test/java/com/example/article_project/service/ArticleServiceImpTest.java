@@ -109,7 +109,7 @@ public class ArticleServiceImpTest {
     void testSearch(){
         // Given
         ArticleSearchCondition condition = new ArticleSearchCondition();
-        condition.setWriter("writer");
+        condition.setWriter("문");
 
         PageRequestDto pageRequestDto = PageRequestDto.builder()
                                                         .page(1)

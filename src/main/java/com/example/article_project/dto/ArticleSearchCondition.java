@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ArticleSearchCondition {
     
+    
     private String title;
     private String contents;
     private String writer;

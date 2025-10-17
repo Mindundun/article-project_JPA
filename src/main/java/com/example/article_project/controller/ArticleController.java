@@ -11,6 +11,7 @@ import com.example.article_project.dto.PageResponseDto;
 import com.example.article_project.service.ArticleService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 
 
-
+@Slf4j
 @RestController
 @RequestMapping("/api/v1")
 @RequiredArgsConstructor
@@ -40,27 +41,35 @@ public class ArticleController {
     public ResponseEntity<PageResponseDto<ArticleDto>> search(@RequestParam(required = false, defaultValue = "") String keyfield,
                                                                 @RequestParam(required = false, defaultValue = "") String keyword,
                                                                 PageRequestDto pageRequestDto) {
-        
-        ArticleSearchCondition condition = new ArticleSearchCondition();
-        switch (keyfield) {
-            case "title":
-                condition.setTitle(keyword);
-                break;
+        if (keyfield == "" || keyword == ""){
+            PageResponseDto<ArticleDto> pageResponseDto = articleService.paging(pageRequestDto);
+            return ResponseEntity.status(HttpStatus.OK).body(pageResponseDto);
+        } else {
+            ArticleSearchCondition condition = new ArticleSearchCondition();
+            switch (keyfield) {
+                case "title":
+                    condition.setTitle(keyword);
+                    break;
+                
+                case "contents":
+                    condition.setContents(keyword);
+                    break;
             
-            case "contents":
-                condition.setContents(keyword);
-                break;
-        
-            case "writer":
-                condition.setWriter(keyword);
-                break;
-        
-            default:
-                break;
+                case "writer":
+                    condition.setWriter(keyword);
+                    break;
+            
+                default:
+                    break;
+            }
+            
+            
+            PageResponseDto<ArticleDto> pageResponseDto = articleService.search(condition,pageRequestDto);
+            
+            return ResponseEntity.status(HttpStatus.OK).body(pageResponseDto);
         }
 
-        PageResponseDto<ArticleDto> pageResponseDto = articleService.search(condition,pageRequestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(pageResponseDto);
+        
     }
     
 
