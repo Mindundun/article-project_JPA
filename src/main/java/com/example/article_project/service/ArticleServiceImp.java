@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.article_project.domain.Article;
 import com.example.article_project.dto.ArticleDto;
+import com.example.article_project.dto.ArticleSearchCondition;
 import com.example.article_project.dto.PageRequestDto;
 import com.example.article_project.dto.PageResponseDto;
 import com.example.article_project.repository.ArticleRepository;
@@ -28,6 +29,24 @@ public class ArticleServiceImp implements ArticleService {
     private final ArticleRepository articleRepository;
 
     
+
+    @Override
+    public PageResponseDto<ArticleDto> search(ArticleSearchCondition condition, PageRequestDto pageRequestDto) {
+        // 페이지는 0부터 나와서 -1처리
+        Pageable pageable = PageRequest.of(pageRequestDto.getPage() -1, pageRequestDto.getSize());
+
+        Page<Article> page = articleRepository.search(condition, pageable);
+
+        List<ArticleDto> articles = page.getContent().stream().map(article -> entityToDto(article)).collect(Collectors.toList());
+
+        int totalCount = (int)page.getTotalElements();
+
+        return PageResponseDto.<ArticleDto>builder()
+                                .dtoList(articles)
+                                .pageRequestDto(pageRequestDto)
+                                .totalCount(totalCount)
+                                .build();
+    }
 
     @Override
     public PageResponseDto<ArticleDto> paging(PageRequestDto pageRequestDto) {

@@ -1,16 +1,24 @@
 package com.example.article_project.service;
 
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.article_project.domain.Article;
 import com.example.article_project.dto.ArticleDto;
+import com.example.article_project.dto.ArticleSearchCondition;
 import com.example.article_project.dto.PageRequestDto;
 import com.example.article_project.dto.PageResponseDto;
 
 
 @Service
 public interface ArticleService {
+
+    // 검색과 페이징 처리
+    PageResponseDto<ArticleDto> search(ArticleSearchCondition condition, PageRequestDto pageRequestDto);
 
     // 페이징 처리
     PageResponseDto<ArticleDto> paging(PageRequestDto pageRequestDto);

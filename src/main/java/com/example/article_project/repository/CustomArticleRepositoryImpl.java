@@ -17,8 +17,9 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 @Repository
-public class CustomArticleRepositoryImp implements CustomArticleRepository{
+public class CustomArticleRepositoryImpl implements CustomArticleRepository{
 
+    
     //JPA 에서 EntityManager를 주입할 때 사용되는 애너테이션
     @PersistenceContext
     private EntityManager em;
@@ -28,7 +29,7 @@ public class CustomArticleRepositoryImp implements CustomArticleRepository{
     private QArticle qArticle = QArticle.article;
 
     // 생성자 (객체 생성)
-    public CustomArticleRepositoryImp(EntityManager em){
+    public CustomArticleRepositoryImpl(EntityManager em){
         jpaQueryFactory = new JPAQueryFactory(em);
     }
         

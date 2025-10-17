@@ -11,6 +11,7 @@ import org.springframework.test.annotation.Rollback;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.example.article_project.dto.ArticleDto;
+import com.example.article_project.dto.ArticleSearchCondition;
 import com.example.article_project.dto.PageRequestDto;
 import com.example.article_project.dto.PageResponseDto;
 
@@ -102,4 +103,25 @@ public class ArticleServiceImpTest {
         assertThat(page.getDtoList()).hasSize(10);
         assertThat(page.getTotalCount()).isEqualTo(125);
     }
+
+    // 검색과 페이징 처리 
+    @Test
+    void testSearch(){
+        // Given
+        ArticleSearchCondition condition = new ArticleSearchCondition();
+        condition.setWriter("writer");
+
+        PageRequestDto pageRequestDto = PageRequestDto.builder()
+                                                        .page(1)
+                                                        .size(10)
+                                                        .build();
+
+        // When
+        PageResponseDto<ArticleDto> page = articleService.search(condition, pageRequestDto);
+
+        // Then
+        log.info("게시글 size : {}", page.getDtoList().size());
+
+    }
+
 }

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.article_project.domain.Article;
 import com.example.article_project.dto.ArticleDto;
+import com.example.article_project.dto.ArticleSearchCondition;
 import com.example.article_project.dto.PageRequestDto;
 import com.example.article_project.dto.PageResponseDto;
 import com.example.article_project.service.ArticleService;
@@ -22,6 +23,8 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 
@@ -32,12 +35,41 @@ public class ArticleController {
     
     private final ArticleService articleService;
 
-    // 페이징 조회
+    // 검색
     @GetMapping("/articles")
-    public ResponseEntity<PageResponseDto<ArticleDto>> paging(PageRequestDto pageRequestDto) {
-        PageResponseDto<ArticleDto> pageResponseDto = articleService.paging(pageRequestDto);
+    public ResponseEntity<PageResponseDto<ArticleDto>> search(@RequestParam(required = false, defaultValue = "") String keyfield,
+                                                                @RequestParam(required = false, defaultValue = "") String keyword,
+                                                                PageRequestDto pageRequestDto) {
+        
+        ArticleSearchCondition condition = new ArticleSearchCondition();
+        switch (keyfield) {
+            case "title":
+                condition.setTitle(keyword);
+                break;
+            
+            case "contents":
+                condition.setContents(keyword);
+                break;
+        
+            case "writer":
+                condition.setWriter(keyword);
+                break;
+        
+            default:
+                break;
+        }
+
+        PageResponseDto<ArticleDto> pageResponseDto = articleService.search(condition,pageRequestDto);
         return ResponseEntity.status(HttpStatus.OK).body(pageResponseDto);
     }
+    
+
+    // 페이징 조회
+    // @GetMapping("/articles")
+    // public ResponseEntity<PageResponseDto<ArticleDto>> paging(PageRequestDto pageRequestDto) {
+    //     PageResponseDto<ArticleDto> pageResponseDto = articleService.paging(pageRequestDto);
+    //     return ResponseEntity.status(HttpStatus.OK).body(pageResponseDto);
+    // }
     
     // 게시글 등록
     @PostMapping("/articles")
